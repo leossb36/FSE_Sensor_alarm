@@ -14,6 +14,7 @@
 pthread_t socketThread, handlerThread;
 
 void setUp() {
+    initSocketClient();
     wiringPiSetup();
     initBme();
     initDevices();

@@ -37,27 +37,18 @@ void initSocketClient() {
 }
 
 void *clientSocketThread() {
-    initSocketClient();
-    return 0;
-}
+    char message[200];
+	while (1) {
+		bzero(message, 100);
+		if((recv(clientSocket, message, 16, 0)) < 0) {
+			printf("Error: Cannot read message sent to client!\n");
+		}
+		else if (message[0] == '\0')
+            printf("Error: Cannot read message sent to client!\n");
+		else
+			printf("Received message %s", message);
 
-int validateMessageStructure(char *message) {
-    char tempMessage[200], payload[200];
-    char *event;
-
-    strncpy(tempMessage, message, strlen(message) + 1);
-    event = strtok(tempMessage, ":");
-    strncpy(payload, tempMessage + strlen(event) + 1, strlen(tempMessage) - strlen(event));
-
-    if (strcmp(event, EXIT_SERVER) == 0) {
-        kill(getpid(), SIGINT);
-        return 1;
-    }
-    else if(strcmp(event, UPDATE_TEMP) == 0 || strcmp(event, CHANGE_DEVICE) == 0)
-        return 1;
-    else {
-        printf("Error: Expected event type of EVENT_HANDLER");
-        return -1;
+        usleep(100000);
     }
 }
 
@@ -68,14 +59,10 @@ void sendMessageClient(char *message) {
     else {
         int sendMessage = 0;
         int unsigned sizeMessage = strlen(message);
-        int responseValidate = validateMessageStructure(message);
 
-        if (responseValidate == 1)
-            sendMessage = send(clientSocket, message, sizeMessage, 0);
-
-        if (!sendMessage) {
+        sendMessage = send(clientSocket, message, sizeMessage, 0);
+        if (!sendMessage)
             printf("Erro: Cannot send message to socket!\n");
-        }
     }
 }
 
