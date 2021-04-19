@@ -17,7 +17,6 @@ void handlerEnvData() {
     float temp, hum;
 
     getTemperature(&temp, &hum);
-    printf("\ntemp: %.2f, hum: %.2f\n", temp, hum);
     sprintf(message, "%s - %.2f - %.2f", UPDATE_TEMP, temp, hum);
 
     writeOnCSVFile(temp, hum);
