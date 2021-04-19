@@ -202,6 +202,6 @@ void getTemperature (float *temp, float *hum) {
 
     bme280ReadValues(&temperature, &pressure, &humidity);
 
-    *temp = temperature/100;
-    *hum = humidity/836;
+    *temp = (float)temperature/100;
+    *hum = (float)humidity/836;
 }
