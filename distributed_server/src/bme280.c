@@ -194,3 +194,14 @@ int64_t var1_64, var2_64;
 	return 0;
 
 } /* bme280ReadValues() */
+
+
+void getTemperature (float temp, float hum) {
+
+	int temperature, pressure, humidity;
+
+    bme280ReadValues(&temperature, &pressure, &humidity);
+
+    temp = temperature/100;
+    hum = humidity/836;
+}
