@@ -5,6 +5,7 @@
 #include "gpio.h"
 #include "handler.h"
 #include "events.h"
+#include "clientSocket.h"
 
 int sensor_states[8] = { 0, 0, 0, 0, 0, 0, 0, 0};
 char sensor_type[8][25] = {
@@ -34,7 +35,6 @@ void writeMessageServer(int index, int value) {
 }
 
 void handlerSensor1() {
-    
     struct timeval now = get_now();
 
     diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[0].tv_usec);
@@ -50,7 +50,6 @@ void handlerSensor1() {
     last_changes[0] = now;
 }
 void handlerSensor2() {
-    
     struct timeval now = get_now();
 
     diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[1].tv_usec);
@@ -66,7 +65,6 @@ void handlerSensor2() {
     last_changes[1] = now;
 }
 void handlerSensor3() {
-    
     struct timeval now = get_now();
 
     diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[2].tv_usec);
@@ -82,7 +80,6 @@ void handlerSensor3() {
     last_changes[2] = now;
 }
 void handlerSensor4() {
-    
     struct timeval now = get_now();
 
     diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[3].tv_usec);
@@ -98,7 +95,6 @@ void handlerSensor4() {
     last_changes[3] = now;
 }
 void handlerSensor5() {
-    
     struct timeval now = get_now();
 
     diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[4].tv_usec);
@@ -114,7 +110,6 @@ void handlerSensor5() {
     last_changes[4] = now;
 }
 void handlerSensor6() {
-    
     struct timeval now = get_now();
 
     diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[5].tv_usec);
@@ -130,7 +125,6 @@ void handlerSensor6() {
     last_changes[5] = now;
 }
 void handlerSensor7() {
-    
     struct timeval now = get_now();
 
     diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[6].tv_usec);
@@ -146,7 +140,6 @@ void handlerSensor7() {
     last_changes[6] = now;
 }
 void handlerSensor8() {
-    
     struct timeval now = get_now();
 
     diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[7].tv_usec);
@@ -166,14 +159,12 @@ void (*handlers[8])() = { handlerSensor1, handlerSensor2, handlerSensor3, handle
                             handlerSensor5, handlerSensor6, handlerSensor7, handlerSensor8 }
 
 void *deviceHandlerThread() {
-    handlerSensorDevice();
-
     for (int i = 0; i < 8; i++)
         pinMode(sensor_states[i], OUTPUT);
 
     for (int i = 0; i < 8; i++)
         gettimeofday(&last_changes[i], NULL);
-    
+
     for (int i = 0; i < 8; i++)
         wiringPiISR(sensor_states[i], INT_EDGE_BOTH, handlers[i]);
 
@@ -183,5 +174,17 @@ void *deviceHandlerThread() {
     while(1) {
         sleep(1);
     }
+}
+
+void sendHandlersServer() {
+    char message[250];
+
+    for (int i = 0; i < 8; i++)
+        sensor_type[i] = digitalRead(sensor_states[i]);
+
+    sprintf(message, "%s - %d - %d - %d - %d - %d - %d - %d - %d",
+            SENSOR_STATES, sensor_type[0], sensor_type[1], sensor_type[2], sensor_type[3],
+            sensor_type[4], sensor_type[5], sensor_type[6], sensor_type[7]);
+    sendMessageClient(message);
 }
 

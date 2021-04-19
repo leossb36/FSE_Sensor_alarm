@@ -1,39 +1,30 @@
 #include "bme280.h"
+#include "events.h"
+#include "clientSocket.h"
+#include "csv.h"
 #include <stdio.h>
 #define ADRESS_SENSOR 0x76
 
 int temperature, pressure, humidity;
 
-int getEnvironmentData() {
+void initBme() {
     int response = 0;
     response = bme280Init(ADRESS_SENSOR);
-    if (response < 0) {
+    if (response < 0)
         printf("Error: Cannot start i2c device!\n");
-        return -1;
-    }
-
-    response = 0;
-    response = bme280ReadValues(&temperature, &pressure, &humidity);
-    if (response < 0) {
-        printf("Error: Cannot read values!\n");
-        return -1;
-    }
-
-    return 1;
 }
 
 void handlerEnvData() {
-    float temp, hum;
+    char message[250];
+    float *temp, *hum;
 
-    int response = 0;
-    response = getEnvironmentData();
-    if (response < 0) {
-        printf("Error: Cannot update Temperature & humidity!\n");
-    }
-    else {
-        temp = temperature/100;
-        hum = humidity/836;
+    bme280_read_values(&temperature, &pressure, &humidity);
 
-        printf("T: %.2f - H: %.2f\n", temp, hum);
-    }
+    *temp = temperature/100;
+    *hum = humidity/836;
+
+    sprintf(message, "%s - %.2f - %.2f", UPDATE_TEMP, *temp, *hum);
+
+    writeOnCSVFile(*temp, *hum);
+    sendMessageClient(message);
 }

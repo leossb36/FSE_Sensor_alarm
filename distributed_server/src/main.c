@@ -9,12 +9,16 @@
 #include "gpio.h"
 #include "handler.h"
 #include "clientSocket.h"
+#include "csv.h"
 
 pthread_t socketThread, handlerThread;
 
 void setUp() {
     wiringPiSetup();
+    initBme();
     initDevices();
+    createCSVFile();
+    sendHandlersServer();
 }
 
 void cancelExecution() {
@@ -24,8 +28,9 @@ void cancelExecution() {
 }
 
 int main(int argc, char **argv) {
-    setUp();
+    signal(SIGINT, cancelExecution);
 
+    setUp();
     pthread_create(&socketThread, NULL, &clientSocketThread, NULL);
     pthread_detach(socketThread);
 
@@ -35,6 +40,5 @@ int main(int argc, char **argv) {
     while(1) {
         sleep(1);
     }
-
     return 0;
 }
