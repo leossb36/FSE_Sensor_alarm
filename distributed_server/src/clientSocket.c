@@ -39,14 +39,14 @@ void initSocketClient() {
 void *clientSocketThread() {
     char message[200];
 	while (1) {
-		bzero(message, 100);
+		bzero(message, 200);
 		if((recv(clientSocket, message, 16, 0)) < 0) {
 			printf("Error: Cannot read message sent to client!\n");
 		}
 		else if (message[0] == '\0')
             printf("Error: Cannot read message sent to client!\n");
 		else
-			printf("Received message %s", message);
+			printf("Received message %s\n", message);
 
         usleep(100000);
     }
