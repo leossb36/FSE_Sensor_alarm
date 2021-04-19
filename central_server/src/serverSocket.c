@@ -83,7 +83,7 @@ void handlerMessageReceived() {
 		else if (message[0] == '\0') errorCount++;
 
 		else
-			printf("Received message %s", message);
+			printf("Received message %s\n", message);
 	}
 	connectClient();
 }
