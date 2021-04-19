@@ -18,7 +18,7 @@ void handlerEnvData() {
     char message[250];
     float *temp, *hum;
 
-    bme280_read_values(&temperature, &pressure, &humidity);
+    bme280ReadValues(&temperature, &pressure, &humidity);
 
     *temp = temperature/100;
     *hum = humidity/836;
