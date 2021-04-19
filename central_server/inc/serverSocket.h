@@ -6,6 +6,6 @@ void createServerSocket();
 void bindServerPort();
 void handlerMessageReceived();
 void *connectClient();
-void getTemperature();
+void sendMessageToClient(char *message);
 
 #endif

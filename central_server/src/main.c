@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     pthread_detach(socketThread);
 
     while(1) {
-        getTemperature();
+        sendMessageToClient("UPDATE_TEMP");
         sleep(1);
     }
 

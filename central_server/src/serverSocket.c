@@ -88,6 +88,9 @@ void handlerMessageReceived() {
 	connectClient();
 }
 
-void getTemperature() {
-	send(clientSocket, "teste", 6, 0);
+void sendMessageToClient(char *message) {
+	if (clientSocket < 0)
+		printf("Error: Cannot send message to client!\n");
+	else
+		send(clientSocket, message, strlen(message), 0);
 }
