@@ -34,7 +34,7 @@ void writeMessageServer(int index, int value) {
 }
 
 void handlerSensor1() {
-    unsigned long diff;
+    
     struct timeval now = get_now();
 
     diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[0].tv_usec);
@@ -44,25 +44,141 @@ void handlerSensor1() {
             printf("SENSOR_PRESENCA_SALA Falling\n");
         else
             printf("SENSOR_PRESENCA_SALA Rising\n");
-        sensor_states[0] = !sensor_states[0];
-
+        sensor_states[0] = !sensor_state[0];
+        writeMessageServer(0, sensor_states[0]);
     }
     last_changes[0] = now;
 }
+void handlerSensor2() {
+    
+    struct timeval now = get_now();
 
-void handlerSensorDevice() {
-    handlerSensorState(SENSOR_PRESENCA_SALA, sensor_type[0], sensor_states[0]);
-    handlerSensorState(SENSOR_PRESENCA_COZINHA, sensor_type[1], sensor_states[1]);
-    handlerSensorState(SENSOR_PORTA_COZINHA, sensor_type[2], sensor_states[2]);
-    handlerSensorState(SENSOR_JANELA_COZINHA, sensor_type[3], sensor_states[3]);
-    handlerSensorState(SENSOR_PORTA_SALA, sensor_type[4], sensor_states[4]);
-    handlerSensorState(SENSOR_JANELA_SALA, sensor_type[5], sensor_states[5]);
-    handlerSensorState(SENSOR_JANELA_QUARTO_1, sensor_type[6], sensor_states[6]);
-    handlerSensorState(SENSOR_JANELA_QUARTO_2, sensor_type[7], sensor_states[7]);
+    diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[1].tv_usec);
+
+    if (diff > IGNORE_CHANGE_BELOW_USEC) {
+        if (sensor_states[1])
+            printf("SENSOR_PRESENCA_COZINHA Falling\n");
+        else
+            printf("SENSOR_PRESENCA_COZINHA Rising\n");
+        sensor_states[1] = !sensor_state[1];
+        writeMessageServer(1, sensor_states[1]);
+    }
+    last_changes[1] = now;
 }
+void handlerSensor3() {
+    
+    struct timeval now = get_now();
+
+    diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[2].tv_usec);
+
+    if (diff > IGNORE_CHANGE_BELOW_USEC) {
+        if (sensor_states[2])
+            printf("SENSOR_PORTA_COZINHA Falling\n");
+        else
+            printf("SENSOR_PORTA_COZINHA Rising\n");
+        sensor_states[2] = !sensor_state[2];
+        writeMessageServer(2, sensor_states[2]);
+    }
+    last_changes[2] = now;
+}
+void handlerSensor4() {
+    
+    struct timeval now = get_now();
+
+    diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[3].tv_usec);
+
+    if (diff > IGNORE_CHANGE_BELOW_USEC) {
+        if (sensor_states[3])
+            printf("SENSOR_JANELA_COZINHA Falling\n");
+        else
+            printf("SENSOR_JANELA_COZINHA Rising\n");
+        sensor_states[3] = !sensor_state[3];
+        writeMessageServer(3, sensor_states[3]);
+    }
+    last_changes[3] = now;
+}
+void handlerSensor5() {
+    
+    struct timeval now = get_now();
+
+    diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[4].tv_usec);
+
+    if (diff > IGNORE_CHANGE_BELOW_USEC) {
+        if (sensor_states[4])
+            printf("SENSOR_PORTA_SALA Falling\n");
+        else
+            printf("SENSOR_PORTA_SALA Rising\n");
+        sensor_states[4] = !sensor_state[4];
+        writeMessageServer(4, sensor_states[4]);
+    }
+    last_changes[4] = now;
+}
+void handlerSensor6() {
+    
+    struct timeval now = get_now();
+
+    diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[5].tv_usec);
+
+    if (diff > IGNORE_CHANGE_BELOW_USEC) {
+        if (sensor_states[5])
+            printf("SENSOR_JANELA_SALA Falling\n");
+        else
+            printf("SENSOR_JANELA_SALA Rising\n");
+        sensor_states[5] = !sensor_state[5];
+        writeMessageServer(5, sensor_states[5]);
+    }
+    last_changes[5] = now;
+}
+void handlerSensor7() {
+    
+    struct timeval now = get_now();
+
+    diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[6].tv_usec);
+
+    if (diff > IGNORE_CHANGE_BELOW_USEC) {
+        if (sensor_states[6])
+            printf("SENSOR_JANELA_QUARTO_1 Falling\n");
+        else
+            printf("SENSOR_JANELA_QUARTO_1 Rising\n");
+        sensor_states[6] = !sensor_state[6];
+        writeMessageServer(6, sensor_states[6]);
+    }
+    last_changes[6] = now;
+}
+void handlerSensor8() {
+    
+    struct timeval now = get_now();
+
+    diff = (now.tv_sec + 1000000 + now.tv_usec) - (last_changes[0].tv_sec + 1000000 + last_changes[7].tv_usec);
+
+    if (diff > IGNORE_CHANGE_BELOW_USEC) {
+        if (sensor_states[7])
+            printf("SENSOR_JANELA_QUARTO_2 Falling\n");
+        else
+            printf("SENSOR_JANELA_QUARTO_2 Rising\n");
+        sensor_states[7] = !sensor_state[7];
+        writeMessageServer(7, sensor_states[7]);
+    }
+    last_changes[7] = now;
+}
+
+void (*handlers[8])() = { handlerSensor1, handlerSensor2, handlerSensor3, handlerSensor4,
+                            handlerSensor5, handlerSensor6, handlerSensor7, handlerSensor8 }
 
 void *deviceHandlerThread() {
     handlerSensorDevice();
+
+    for (int i = 0; i < 8; i++)
+        pinMode(sensor_states[i], OUTPUT);
+
+    for (int i = 0; i < 8; i++)
+        gettimeofday(&last_changes[i], NULL);
+    
+    for (int i = 0; i < 8; i++)
+        wiringPiISR(sensor_states[i], INT_EDGE_BOTH, handlers[i]);
+
+    for (int i = 0; i < 8; i++)
+        sensor_type[i] = digitalRead(sensor_states[i]);
 
     while(1) {
         sleep(1);
