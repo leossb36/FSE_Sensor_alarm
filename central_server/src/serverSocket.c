@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <sys/socket.h>
+#include "serverSocket.h"
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,6 +64,8 @@ void *connectClient() {
 		printf("Error: Cannot connect with Client!\n");
 
 	printf("Success: Client enabled - %s\n", inet_ntoa(clientAdress.sin_addr));
+
+	return 0;
 }
 
 void handlerMessageReceived() {
