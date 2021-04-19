@@ -1,0 +1,8 @@
+#ifndef EVENTS_H
+#define EVENTS_H
+
+#define EXIT_SERVER "EXIT_SERVER"
+#define UPDATE_TEMP "UPDATE_TEMP"
+#define CHANGE_DEVICE "CHANGE_DEVICE"
+
+#endif
