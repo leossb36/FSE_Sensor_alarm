@@ -10,6 +10,7 @@
 
 #define PORT 10006
 #define SERVER_IP_ADRESS "192.168.0.53"
+#define MAX_SIZE 200
 
 volatile int clientStatus = 0;
 
@@ -38,9 +39,9 @@ void initSocketClient() {
 }
 
 void *clientSocketThread() {
-    char message[200];
+    char message[MAX_SIZE];
 	while (1) {
-		bzero(message, 200);
+		bzero(message, MAX_SIZE);
 		if((recv(clientSocket, message, 16, 0)) < 0) {
 			printf("Error: Cannot read message sent to client!\n");
 		}
@@ -76,15 +77,15 @@ void readMessageClient(char *message) {
     else {
         int receivedBytes = 0;
         int totalReceivedBytes = 0;
-        char buffer[16];
+        char message[MAX_SIZE];
 
         while(totalReceivedBytes < strlen(message)) {
-            receivedBytes = recv(clientSocket, buffer, 16-1, 0);
+            receivedBytes = recv(clientSocket, message, MAX_SIZE-1, 0);
             if(receivedBytes <= 0)
                 printf("Error: Didn't receive the total number of bytes\n");
 
             totalReceivedBytes += receivedBytes;
-            buffer[receivedBytes] = '\0';
+            message[receivedBytes] = '\0';
         }
     }
 }
