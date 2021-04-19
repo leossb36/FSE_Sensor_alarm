@@ -15,9 +15,11 @@ struct sockaddr_in serverAdress;
 struct sockaddr_in clientAdress;
 unsigned short serverPort;
 unsigned int clientConnect;
+char clientMessage[200];
 
 
 void initSocketServer() {
+	memset(clientMessage, '\0', sizeof(clientMessage));
 	serverPort = atoi(SERVER_PORT);
 	createServerSocket();
 
@@ -71,20 +73,20 @@ void *connectClient() {
 }
 
 void handlerMessageReceived() {
-	char message[200];
 	int errorCount;
 	while (1) {
-		if (errorCount > 20) break;
-		bzero(message, 200);
+		bzero(clientMessage, 200);
 
-		if((recv(clientSocket, message, strlen(message), 0)) < 0) {
+		if (errorCount > 20) break;
+
+		if((recv(clientSocket, clientMessage, strlen(clientMessage), 0)) < 0) {
 			errorCount++;
 			printf("Error: Cannot read message sent to client!\n");
 		}
-		else if (message[0] == '\0') errorCount++;
+		else if (clientMessage[0] == '\0') errorCount++;
 
 		else
-			printf("Received message %s\n", message);
+			printf("Server: Received message %s\n", clientMessage);
 	}
 	connectClient();
 }

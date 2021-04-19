@@ -47,7 +47,7 @@ void *clientSocketThread() {
 		else if (message[0] == '\0')
             printf("Error: Cannot read message sent to client!\n");
 		else
-			printf("Received message %s\n", message);
+			printf("Client: Received message %s\n", message);
             eventMessageHandler(message);
 
         usleep(100000);
