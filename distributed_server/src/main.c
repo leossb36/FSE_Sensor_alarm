@@ -5,26 +5,32 @@
 #include <curses.h>
 #include <unistd.h>
 #include <wiringPi.h>
-#include "getTemp.h"
+#include "environment.h"
 #include "gpio.h"
-#include "interrupcoes.h"
+#include "handler.h"
+#include "clientSocket.h"
 
-pthread_t tid;
+pthread_t socketThread, handlerThread;
 
 void setUp() {
     wiringPiSetup();
-    init_devices();
+    initDevices();
+}
+
+void cancelExecution() {
+    printf("Stopping client server...");
+    pthread_cancel(socketThread);
+    exit(0);
 }
 
 int main(int argc, char **argv) {
     setUp();
 
-    handle_device(LAMPADA_COZINHA, 1);
-    // signal(SIGINT, cancelProcess);
+    pthread_create(&socketThread, NULL, &clientSocketThread, NULL);
+    pthread_detach(socketThread);
 
-    pthread_create(&tid, NULL, &init_interruption, NULL);
-
-    pthread_detach(tid);
+    pthread_create(&handlerThread, NULL, &deviceHandlerThread, NULL);
+    pthread_detach(handlerThread);
 
     while(1) {
         sleep(1);

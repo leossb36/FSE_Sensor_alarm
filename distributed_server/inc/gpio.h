@@ -8,7 +8,7 @@
 #define AR_CONDICIONADO_QUARTO_01 23 // GPIO 13
 #define AR_CONDICIONADO_QUARTO_02 24 // GPIO 19
 
-void handle_device(int PWM_pin, int intensity);
-void init_devices();
+void handlerDevice(int PWM_pin, int intensity);
+void initDevices();
 
 #endif

@@ -9,21 +9,21 @@
 #include <unistd.h>
 #include <gpio.h>
 
-void handle_device(int PWM_pin, int intensity){
+void handlerDevice(int PWM_pin, int intensity){
 	softPwmWrite(PWM_pin, intensity);
 	usleep(10000);
 }
 
-void config_devices(int PWM_pin) {
+void createDevice(int PWM_pin) {
 	pinMode(PWM_pin,OUTPUT);
 	softPwmCreate(PWM_pin, 1,100);
 }
 
-void init_devices() {
-	config_devices(LAMPADA_COZINHA);
-	config_devices(LAMPADA_SALA);
-	config_devices(LAMPADA_QUARTO_01);
-	config_devices(LAMPADA_QUARTO_02);
-	config_devices(AR_CONDICIONADO_QUARTO_01);
-	config_devices(AR_CONDICIONADO_QUARTO_02);
+void initDevices() {
+	createDevice(LAMPADA_COZINHA);
+	createDevice(LAMPADA_SALA);
+	createDevice(LAMPADA_QUARTO_01);
+	createDevice(LAMPADA_QUARTO_02);
+	createDevice(AR_CONDICIONADO_QUARTO_01);
+	createDevice(AR_CONDICIONADO_QUARTO_02);
 }
