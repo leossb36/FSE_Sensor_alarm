@@ -13,10 +13,10 @@ void initBme() {
 }
 
 void handlerEnvData() {
-    char message[250];
+    char message[200];
     float temp, hum;
 
-    getTemperature(temp, hum);
+    getTemperature(&temp, &hum);
     printf("\ntemp: %.2f, hum: %.f\n", temp, hum);
     sprintf(message, "%s - %.2f - %.2f", UPDATE_TEMP, temp, hum);
 

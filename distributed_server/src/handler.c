@@ -30,7 +30,7 @@ struct timeval get_now() {
 }
 
 void writeMessageServer(int index, int value) {
-    char message[250];
+    char message[200];
     sprintf(message, "%s - %d - %i", CHANGE_DEVICE, index, value);
 }
 
@@ -185,7 +185,7 @@ void *deviceHandlerThread() {
 }
 
 void sendHandlersServer() {
-    char message[250];
+    char message[200];
 
     for (int i = 0; i < 8; i++)
         sensor_type[i] = digitalRead(sensor_states[i]);
