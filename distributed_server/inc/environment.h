@@ -1,7 +1,7 @@
-#ifndef _ENVIRONMENT_
-#define _ENVIRONMENT_
+#ifndef ENVIRONMENT_H_
+#define ENVIRONMENT_H_
 
-int getEnvironmentData();
+void initBme();
 void handlerEnvData();
 
 #endif

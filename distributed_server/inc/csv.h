@@ -1,6 +1,6 @@
-#ifndef CSV_H
-#define CSV_H
+#ifndef CSV_H_
+#define CSV_H_
 
-void writeOnCSVFile(float, float, float, float, float);
+void writeOnCSVFile(float, float);
 
 #endif
