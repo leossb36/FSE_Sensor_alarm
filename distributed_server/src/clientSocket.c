@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include "events.h"
+#include "messageHandler.h"
 
 #define PORT 10006
 #define SERVER_IP_ADRESS "192.168.0.53"
@@ -47,9 +48,11 @@ void *clientSocketThread() {
             printf("Error: Cannot read message sent to client!\n");
 		else
 			printf("Received message %s\n", message);
+            eventMessageHandler(message);
 
         usleep(100000);
     }
+    return 0;
 }
 
 void sendMessageClient(char *message) {
