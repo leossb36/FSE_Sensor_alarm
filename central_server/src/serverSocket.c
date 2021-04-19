@@ -75,7 +75,7 @@ void handlerMessageReceived() {
 	int errorCount;
 	while (1) {
 		if (errorCount > 20) break;
-		bzero(message, 100);
+		bzero(message, 200);
 		if((recv(clientSocket, message, 16, 0)) < 0) {
 			errorCount++;
 			printf("Error: Cannot read message sent to client!\n");
