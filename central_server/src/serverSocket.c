@@ -65,6 +65,8 @@ void *connectClient() {
 
 	printf("Success: Client enabled - %s\n", inet_ntoa(clientAdress.sin_addr));
 
+	handlerMessageReceived();
+
 	return 0;
 }
 
