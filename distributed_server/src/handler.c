@@ -164,7 +164,7 @@ void handlerSensor8() {
 }
 
 void (*handlers[8])() = { handlerSensor1, handlerSensor2, handlerSensor3, handlerSensor4,
-                            handlerSensor5, handlerSensor6, handlerSensor7, handlerSensor8 }
+                            handlerSensor5, handlerSensor6, handlerSensor7, handlerSensor8 };
 
 void *deviceHandlerThread() {
     for (int i = 0; i < 8; i++)
