@@ -1,8 +1,9 @@
-#ifndef EVENTS_H
-#define EVENTS_H
+#ifndef EVENTS_H_
+#define EVENTS_H_
 
 #define EXIT_SERVER "EXIT_SERVER"
 #define UPDATE_TEMP "UPDATE_TEMP"
 #define CHANGE_DEVICE "CHANGE_DEVICE"
+#define SENSOR_STATES "SENSOR_STATES" 
 
 #endif

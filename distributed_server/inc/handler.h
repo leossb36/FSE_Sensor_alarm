@@ -1,5 +1,5 @@
-#ifndef HANDLER_H
-#define HANDLER_H
+#ifndef HANDLER_H_
+#define HANDLER_H_
 
 #define  SENSOR_PRESENCA_SALA 6
 #define  SENSOR_PRESENCA_COZINHA 25
