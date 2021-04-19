@@ -1,39 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <unistd.h>
 #include <pthread.h>
 #include "csv.h"
+#include "serverSocket.h"
 #include "menu.h"
 #include <curses.h>
 
-pthread_t tid;
+pthread_t socketThread;
 
-void cancelProcessUart(int signal) {
-    using_fan(0);
-    using_resistor(0);
-    ClrLcd();
-    closeUart();
-    close_bme();
-    endwin();
-    exit(0);
+// void cancelExecution() {
+// }
+
+void setUp() {
+    initSocketServer();
 }
 
 int main(int argc, char **argv) {
 
-    signal(SIGINT, cancelProcessUart);
+    // signal(SIGINT, cancelExecution);
+    setUp();
 
-    pthread_create(&tid, NULL, &menu_execution, NULL);
+    pthread_create(&socketThread, NULL, &connectClient, NULL);
 
-    pthread_detach(tid);
-
-    setupLCD();
-
-    init_bme();
-    pid_configura_constantes(5.0, 1.0, 5.0);
+    pthread_detach(socketThread);
 
     while(1) {
-        update_display();
-        usleep(800000);
+        getTemperature();
+        sleep(1);
     }
 
     return 0;

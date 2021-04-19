@@ -15,23 +15,8 @@ struct sockaddr_in clientAdress;
 unsigned short serverPort;
 unsigned int clientConnect;
 
-void sendMessageToClient() {
-	char buffer[16];
-	int receivedBytes;
 
-	if((receivedBytes = recv(clientSocket, buffer, 16, 0)) < 0)
-		printf("Error: Cannot read received bytes\n");
-
-	while (receivedBytes > 0) {
-		if(send(clientSocket, buffer, receivedBytes, 0) != receivedBytes)
-			printf("Error: Cannot send message to client!\n");
-		
-		if((receivedBytes = recv(clientSocket, buffer, 16, 0)) < 0)
-			printf("Error: Cannot read message sent to client!\n");
-	}
-}
-
-int initSocketServer() {
+void initSocketServer() {
 	serverPort = atoi(SERVER_PORT);
 	createServerSocket();
 
@@ -39,17 +24,13 @@ int initSocketServer() {
 	serverAdress.sin_family = AF_INET;
 	serverAdress.sin_addr.s_addr = htonl(INADDR_ANY);
 	serverAdress.sin_port = htons(serverPort);
-	
+
 	bindServerPort();
 
 	if(listen(_serverSocket, 10) < 0) {
 		printf("Error: Cannot listen server socket!\n");
 		close(_serverSocket);
-		return 0;
 	}
-	else {
-        return 1;
-    }
 }
 
 void createServerSocket() {
@@ -66,13 +47,17 @@ void bindServerPort() {
 	int bindingPort = 0;
 	bindingPort = bind(_serverSocket, (struct sockaddr *)
 		&serverAdress, sizeof(serverAdress));
-	
+
 	if(bindingPort < 0)
 		printf("Error: Cannot bind server port - %s\n", SERVER_PORT);
 }
 
-void connectClient() {
+void *connectClient() {
 	clientConnect = sizeof(clientAdress);
+	if(listen(_serverSocket, 10) < 0) {
+		printf("Error: Cannot listen server socket!\n");
+		close(_serverSocket);
+	}
 	clientSocket = accept(_serverSocket,(struct sockaddr *) &clientAdress, &clientConnect);
 	if(clientSocket < 0)
 		printf("Error: Cannot connect with Client!\n");
@@ -80,10 +65,24 @@ void connectClient() {
 	printf("Success: Client enabled - %s\n", inet_ntoa(clientAdress.sin_addr));
 }
 
-void connectWithClientServer() {
-	while(1) {
-		connectClient();
-		sendMessageToClient();
-		close(clientSocket);
+void handlerMessageReceived() {
+	char message[200];
+	int errorCount;
+	while (1) {
+		if (errorCount > 20) break;
+		bzero(message, 100);
+		if((recv(clientSocket, message, 16, 0)) < 0) {
+			errorCount++;
+			printf("Error: Cannot read message sent to client!\n");
+		}
+		else if (message[0] == '\0') errorCount++;
+
+		else
+			printf("Received message %s", message);
 	}
+	connectClient();
+}
+
+void getTemperature() {
+	send(clientSocket, "teste", 6, 0);
 }
