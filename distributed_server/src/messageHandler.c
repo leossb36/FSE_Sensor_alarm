@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 int eventMessageHandler(char *message) {
     char tempMessage[200], payload[200];

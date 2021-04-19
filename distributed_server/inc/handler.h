@@ -13,5 +13,6 @@
 #define IGNORE_CHANGE_BELOW_USEC 10000
 
 void *deviceHandlerThread();
+void sendHandlersServer();
 
 #endif
