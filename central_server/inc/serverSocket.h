@@ -1,7 +1,9 @@
 #ifndef SERVER_SOCKET_H
 #define SERVER_SOCKET_H
 
-int initSocketServer();
+void initSocketServer();
+void createServerSocket();
+void bindServerPort();
 void handlerMessageReceived();
 void *connectClient();
 void getTemperature();
