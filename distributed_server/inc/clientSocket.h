@@ -3,7 +3,6 @@
 
 void *clientSocketThread();
 void sendMessageClient(char *message);
-void readMessageClient(char *message);
 void initSocketClient();
 
 #endif

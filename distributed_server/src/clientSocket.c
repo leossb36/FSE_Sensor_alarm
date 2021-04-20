@@ -42,7 +42,7 @@ void *clientSocketThread() {
     char message[MAX_SIZE];
 	while (1) {
 		bzero(message, MAX_SIZE);
-		if((recv(clientSocket, message, 16, 0)) < 0) {
+		if((recv(clientSocket, message, MAX_SIZE, 0)) < 0) {
 			printf("Error: Cannot read message sent to client!\n");
 		}
 		else if (message[0] == '\0')
@@ -67,25 +67,5 @@ void sendMessageClient(char *message) {
         sendMessage = send(clientSocket, message, sizeMessage, 0);
         if (!sendMessage)
             printf("Erro: Cannot send message to socket!\n");
-    }
-}
-
-void readMessageClient(char *message) {
-    if (clientSocket < 0) {
-        printf("Erro: Cannot read message from socket!\n");
-    }
-    else {
-        int receivedBytes = 0;
-        int totalReceivedBytes = 0;
-        char message[MAX_SIZE];
-
-        while(totalReceivedBytes < strlen(message)) {
-            receivedBytes = recv(clientSocket, message, MAX_SIZE-1, 0);
-            if(receivedBytes <= 0)
-                printf("Error: Didn't receive the total number of bytes\n");
-
-            totalReceivedBytes += receivedBytes;
-            message[receivedBytes] = '\0';
-        }
     }
 }

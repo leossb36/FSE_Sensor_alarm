@@ -24,6 +24,7 @@ void setUp() {
 
 void cancelExecution() {
     printf("Stopping client server...");
+    pthread_cancel(handlerThread);
     pthread_cancel(socketThread);
     exit(0);
 }
