@@ -42,8 +42,12 @@ void eventMessageHandler(char *message) {
     event = strtok(tempMessage, ":");
     strncpy(payload, tempMessage + (strlen(event) + 1), strlen(tempMessage) - strlen(event));
 
-    if (strcmp(event, SENSOR_STATES) == 0)
+    if (strcmp(event, SENSOR_STATES) == 0) {
+        writeOnCSVFile(event, payload);
         updateSensorData(payload);
-    else if(strcmp(event, UPDATE_TEMP) == 0)
+    }
+    else if(strcmp(event, UPDATE_TEMP) == 0) {
+        writeOnCSVFile(event, payload);
         updateTempNHum(payload);
+    }
 }
