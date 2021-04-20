@@ -8,6 +8,7 @@
 
 #define SERVER_IP_ADRESS "192.168.0.53"
 #define SERVER_PORT "10006"
+#define MAX_SIZE 200
 
 int _serverSocket;
 int clientSocket;
@@ -75,7 +76,7 @@ void *connectClient() {
 void handlerMessageReceived() {
 	int errorCount;
 	while (1) {
-		bzero(clientMessage, 200);
+		bzero(clientMessage, MAX_SIZE);
 
 		if (errorCount > 20) break;
 
