@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "messageHandler.h"
 
 #define SERVER_IP_ADRESS "192.168.0.53"
 #define SERVER_PORT "10006"
