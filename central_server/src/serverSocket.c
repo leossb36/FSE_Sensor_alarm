@@ -86,8 +86,10 @@ void handlerMessageReceived() {
 		}
 		else if (clientMessage[0] == '\0') errorCount++;
 
-		else
+		else {
 			printf("Server: Received message %s\n", clientMessage);
+			eventMessageHandler(clientMessage);
+		}
 	}
 	connectClient();
 }
