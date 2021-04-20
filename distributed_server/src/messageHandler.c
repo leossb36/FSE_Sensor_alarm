@@ -10,9 +10,11 @@ void eventMessageHandler(char *message) {
     char tempMessage[200], payload[200];
     char *event;
 
-    strncpy(tempMessage, message, strlen(message));
+    strncpy(tempMessage, message, strlen(message) + 1);
 
     event = strtok(tempMessage, ":");
+
+    printf("%s\n", event);
 
     strncpy(payload, tempMessage + (strlen(event) + 1), strlen(tempMessage) - strlen(event));
 
