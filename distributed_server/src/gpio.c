@@ -7,7 +7,20 @@
 #include <stdio.h>
 #include <softPwm.h>  /* include header file for software PWM */
 #include <unistd.h>
-#include <gpio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "gpio.h"
+#include "clientSocket.h"
+#include "events.h"
+
+int sensors[] = {
+	LAMPADA_COZINHA,
+	LAMPADA_SALA,
+	LAMPADA_QUARTO_01,
+	LAMPADA_QUARTO_02,
+	AR_CONDICIONADO_QUARTO_1,
+	AR_CONDICIONADO_QUARTO_2
+};
 
 void handlerDevice(int PWM_pin, int intensity){
 	softPwmWrite(PWM_pin, intensity);
@@ -15,15 +28,25 @@ void handlerDevice(int PWM_pin, int intensity){
 }
 
 void createDevice(int PWM_pin) {
-	pinMode(PWM_pin,OUTPUT);
+	pinMode(PWM_pin, OUTPUT);
 	softPwmCreate(PWM_pin, 1,100);
 }
 
-void initDevices() {
-	createDevice(LAMPADA_COZINHA);
-	createDevice(LAMPADA_SALA);
-	createDevice(LAMPADA_QUARTO_01);
-	createDevice(LAMPADA_QUARTO_02);
-	createDevice(AR_CONDICIONADO_QUARTO_01);
-	createDevice(AR_CONDICIONADO_QUARTO_02);
+void handlerMessageGpio(char * message) {
+    char *event;
+	char messageToServer[200];
+	bzero(messageToServer, sizeof(messageToServer));
+
+	int sensorIndex, sensorState;
+
+    event = strtok(message, ":");
+	sensorIndex = atoi(event);
+
+	event = strtok(NULL, ":");
+	sensorState = atoi(event);
+
+	handlerDevice(sensors[sensorIndex], sensorState * 100);
+
+	sprintf(messageToServer, "%s - %d - %d", GET_GPIO_DEVICE_STATE, sensorIndex, sensorState);
+	sendMessageToServer(messageToServer);
 }

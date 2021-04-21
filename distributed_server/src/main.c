@@ -17,13 +17,21 @@ void setUp() {
     initSocketClient();
     wiringPiSetup();
     initBme();
-    initDevices();
+
+    createDevice(LAMPADA_COZINHA);
+	createDevice(LAMPADA_SALA);
+	createDevice(LAMPADA_QUARTO_01);
+	createDevice(LAMPADA_QUARTO_02);
+	createDevice(AR_CONDICIONADO_QUARTO_1);
+	createDevice(AR_CONDICIONADO_QUARTO_2);
+
     createCSVFile();
     sendHandlersServer();
 }
 
 void cancelExecution() {
-    printf("Stopping client server...");
+    printf("\nStopping client server...\n");
+    closeClientSocket();
     pthread_cancel(handlerThread);
     pthread_cancel(socketThread);
     exit(0);

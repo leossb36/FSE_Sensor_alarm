@@ -168,16 +168,16 @@ void (*handlers[8])() = { handlerSensor1, handlerSensor2, handlerSensor3, handle
 
 void *deviceHandlerThread() {
     for (int i = 0; i < 8; i++)
-        pinMode(sensor_states[i], OUTPUT);
+        pinMode(sensor_type[i], OUTPUT);
 
     for (int i = 0; i < 8; i++)
         gettimeofday(&last_changes[i], NULL);
 
     for (int i = 0; i < 8; i++)
-        wiringPiISR(sensor_states[i], INT_EDGE_BOTH, handlers[i]);
+        wiringPiISR(sensor_type[i], INT_EDGE_BOTH, handlers[i]);
 
     for (int i = 0; i < 8; i++)
-        sensor_type[i] = digitalRead(sensor_states[i]);
+        sensor_states[i] = digitalRead(sensor_type[i]);
 
     while(1) {
         sleep(1);
@@ -188,11 +188,11 @@ void sendHandlersServer() {
     char message[200];
 
     for (int i = 0; i < 8; i++)
-        sensor_type[i] = digitalRead(sensor_states[i]);
+        sensor_states[i] = digitalRead(sensor_type[i]);
 
     sprintf(message, "%s - %d - %d - %d - %d - %d - %d - %d - %d",
-            SENSOR_STATES, sensor_type[0], sensor_type[1], sensor_type[2], sensor_type[3],
-            sensor_type[4], sensor_type[5], sensor_type[6], sensor_type[7]);
-    sendMessageClient(message);
+            SENSOR_STATES, sensor_states[0], sensor_states[1], sensor_states[2], sensor_states[3],
+            sensor_states[4], sensor_states[5], sensor_states[6], sensor_states[7]);
+    sendMessageToServer(message);
 }
 

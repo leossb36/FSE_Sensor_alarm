@@ -20,5 +20,5 @@ void handlerEnvData() {
     sprintf(message, "%s - %.2f - %.2f", UPDATE_TEMP, temp, hum);
 
     writeOnCSVFile(temp, hum);
-    sendMessageClient(message);
+    sendMessageToServer(message);
 }

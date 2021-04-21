@@ -1,5 +1,6 @@
 #include "events.h"
 #include "environment.h"
+#include "gpio.h"
 #include <string.h>
 #include <signal.h>
 #include <stdio.h>
@@ -14,15 +15,12 @@ void eventMessageHandler(char *message) {
 
     event = strtok(tempMessage, ":");
 
-    printf("%s\n", event);
-
     strncpy(payload, tempMessage + (strlen(event) + 1), strlen(tempMessage) - strlen(event));
 
+    if(strcmp(event, GET_GPIO_DEVICE_STATE) == 0)
+        handlerMessageGpio(payload);
     if (strcmp(event, EXIT_SERVER) == 0)
         kill(getpid(), SIGINT);
-    else if(strcmp(event, UPDATE_TEMP) == 0)
+    if(strcmp(event, UPDATE_TEMP) == 0)
         handlerEnvData();
-    else {
-        printf("Error: Expected event type of EVENT_HANDLER\n");
-    }
 }
