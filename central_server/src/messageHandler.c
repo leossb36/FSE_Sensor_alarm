@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "csv.h"
 
 volatile float temperature, humidity;
 volatile int sensors[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -32,6 +31,19 @@ void updateSensorData(char * payload) {
     sensors[sensorIndex] = sensorValue;
 }
 
+void handlerMessageGpio(char * payload) {
+    char *event;
+	int sensorIndex, sensorState;
+
+    event = strtok(payload, ":");
+	sensorIndex = atoi(event);
+    
+	event = strtok(NULL, ":");
+	sensorState = atoi(event);
+
+	sensors[sensorIndex] = sensorState;
+}
+
 void eventMessageHandler(char *message) {
     char tempMessage[200], payload[200];
     char *event;
@@ -44,11 +56,12 @@ void eventMessageHandler(char *message) {
     strncpy(payload, tempMessage + (strlen(event) + 1), strlen(tempMessage) - strlen(event));
 
     if (strcmp(event, SENSOR_STATES) == 0) {
-        writeOnCSVFile(*event, *payload);
         updateSensorData(payload);
     }
-    else if(strcmp(event, UPDATE_TEMP) == 0) {
-        writeOnCSVFile(*event, *payload);
+    if(strcmp(event, GET_GPIO_DEVICE_STATE) == 0) {
+        handlerMessageGpio(payload);
+    }
+    if(strcmp(event, UPDATE_TEMP) == 0) {
         updateTempNHum(payload);
     }
 }

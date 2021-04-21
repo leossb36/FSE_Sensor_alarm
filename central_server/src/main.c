@@ -6,12 +6,16 @@
 #include "csv.h"
 #include "serverSocket.h"
 #include "menu.h"
+#include "events.h"
 #include <curses.h>
 
 pthread_t socketThread;
 
-// void cancelExecution() {
-// }
+void cancelExecution() {
+    printf("Stopping Server...\n");
+    pthread_cancel(socketThread);
+    exit(0);
+}
 
 void setUp() {
     initSocketServer();
@@ -19,15 +23,16 @@ void setUp() {
 
 int main(int argc, char **argv) {
 
-    // signal(SIGINT, cancelExecution);
+    signal(SIGINT, cancelExecution);
+    signal(SIGPIPE, SIG_IGN);
+
     setUp();
 
     pthread_create(&socketThread, NULL, &connectClient, NULL);
-
     pthread_detach(socketThread);
 
     while(1) {
-        sendMessageToClient("UPDATE_TEMP");
+        sendMessageToClient(UPDATE_TEMP);
         sleep(1);
     }
 
