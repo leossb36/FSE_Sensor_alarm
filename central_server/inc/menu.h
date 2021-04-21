@@ -1,9 +1,6 @@
-// #ifndef MENU_H
-// #define MENU_H
+#ifndef MENU_H
+#define MENU_H
 
-// #include <curses.h>
+void *menuExecution();
 
-// void *menu_execution();
-// void write_on_data_box(WINDOW *, WINDOW *, WINDOW *, int , int , int, int);
-
-// #endif
+#endif

@@ -1,114 +1,101 @@
-// #include "menu.h"
-// #include <curses.h>
-// #include "control.h"
+#include "menu.h"
+#include "messageHandler.h"
+#include "serverSocket.h"
+#include "events.h"
+#include "csv.h"
+#include <curses.h>
+#include <unistd.h>
 
-// volatile int manual = 0;
+char options[6][30] = { 
+    "Lampada Cozinha", 
+    "Lampada Sala", 
+    "Lampada quarto 1", 
+    "Lampada quarto 2",
+    "Ar condicionado 1",
+    "Ar condicionado 2"
+};
 
-// void *menu_execution() {
+char status[2][13] = { "Desconectado", "Conectado" };
+char sensorState[3][32] = { "Aguardando", "Ocioso", "Detectando" };
 
-//     int box_size_x, box_size_y;
-//     int commands_box_size = 3;
-//     int key = ERR;
 
-//     box_size_x = box_size_y = 30;
+void updateSensorPresence(int sensorIndex, int sensorState) {
+    char message[200];
 
-//     int hightlight = 0;
+    sprintf(message, "%s - %d - %d", GET_GPIO_DEVICE_STATE, sensorIndex, sensorState);
+    sendMessageToClient(message);
+    writeOnCSVFile(GET_GPIO_DEVICE_STATE, options[sensorIndex], sensorState);
+}
 
-//     initscr();
-//     noecho();
-//     nodelay(stdscr, TRUE);
-//     curs_set(FALSE);
-//     keypad(stdscr, TRUE);
+void *menuExecution() {
+    int box_size_x, box_size_y, commands_box_size = 3, key = ERR;
 
-//     char options[2][30] = {"[1] - POTENCIOMETRO", "[2] - TEMPERATURA MANUAL"};
+    box_size_x = box_size_y = 30;
 
-//     // set up initial windows
-//     getmaxyx(stdscr, box_size_y, box_size_x);
+    initscr();
+    noecho();
+    nodelay(stdscr, TRUE);
+    curs_set(FALSE);
+    keypad(stdscr, TRUE);
 
-//     WINDOW *data_box = newwin(box_size_y/4 - commands_box_size - 1, box_size_x/4,  0, 0 );
-//     WINDOW *command_box = newwin(commands_box_size, box_size_x/2 + 2, box_size_y/5 - 1, 0);
-//     WINDOW *result_box = newwin(box_size_y/4 - commands_box_size - 1, box_size_x/6, 0, box_size_x/4);
-//     WINDOW *referencial_box = newwin(box_size_y/4 - commands_box_size - 1, box_size_x/10, 0, box_size_x/2 - box_size_x/12 - 2);
+    // set up initial windows
+    getmaxyx(stdscr, box_size_y, box_size_x);
 
-//     box(data_box, 0, 0);
-//     box(command_box, 0, 0);
-//     box(result_box, 0, 0);
-//     box(referencial_box, 0, 0);
+    WINDOW *data_box = newwin((box_size_y - commands_box_size) -4, (box_size_x/2)-1, 0, 0);
+    WINDOW *command_box = newwin((box_size_y - commands_box_size) -4, (box_size_x/2)-1, 0, (box_size_x/2));
 
-//     while(1) {
-//         for(int i = 0; i < 2; i++) {
-//             if (i == hightlight) {
-//                 wattron(command_box, A_REVERSE);
-//             }
-//             mvwprintw(command_box, 1, i+i*50 + box_size_x/10, options[i]);
-//             wattroff(command_box, A_REVERSE);
-//         }
+    box(data_box, 0, 0);
+    box(command_box, 0, 0);
 
-//         key = getch();
+    while(1) {
+        wrefresh(stdscr);
+        wrefresh(data_box);
+        wrefresh(command_box);
 
-//         switch(key) {
-//             case KEY_LEFT:
-//                 hightlight = 0;
-//                 manual = 0;
-//                 break;
-//             case KEY_RIGHT:
-//                 hightlight = 1;
-//                 manual = 1;
-//                 break;
-//             case KEY_UP:
-//                 if(manual) {
-//                     referencial_temp++;
-//                     if(referencial_temp > 99) {
-//                         referencial_temp = 99;
-//                     }
-//                 }
-//                 break;
-//             case KEY_DOWN:
-//                 if(manual) {
-//                     referencial_temp--;
-//                     if(referencial_temp < (int)temp_ext) {
-//                         referencial_temp = (int)temp_ext;
-//                     }
-//                 }
-//                 break;
-//             default:
-//                 break;
-//         }
+        for(int i = 0; i < 6; i++) {
+            if (sensors[i])
+                wattron(command_box, A_REVERSE);
+            mvwprintw(command_box, i + 1, 2, "[%d] - %s", i + 1, options[i]);
+            wattroff(command_box, A_REVERSE);
+        }
 
-//         // draw to our windows
-//         mvwprintw(data_box, 0, (box_size_x/4)/2, "Dados");
-//         mvwprintw(command_box, 0, (box_size_x/2 + 2)/4 + (box_size_x/2 + 2)/5, "Comandos");
-//         mvwprintw(result_box, 0, (box_size_x/6)/3, "Resultados");
-//         mvwprintw(referencial_box, 0, (box_size_x/10)/3 + 2, "Ajuste");
+        key = getch();
 
-//         write_on_data_box(data_box, result_box, referencial_box, (box_size_x/4), (box_size_x/6)/3 + 3, (box_size_x/10)/3 + 3, box_size_y/4);
+        switch (key) {
+            case '1':
+                updateSensorPresence(0, 1 - sensors[0]);
+                break;
+            case '2':
+                updateSensorPresence(1, 1 - sensors[1]);
+                break;
+            case '3':
+                updateSensorPresence(2, 1 - sensors[2]);
+                break;
+            case '4':
+                updateSensorPresence(3, 1 - sensors[3]);
+                break;
+            case '5':
+                updateSensorPresence(4, 1 - sensors[4]);
+                break;
+            case '6':
+                updateSensorPresence(5, 1 - sensors[5]);
+                break;
+            default:
+                break;
+        }
 
-//         wrefresh(stdscr);
-//         wrefresh(data_box);
-//         wrefresh(command_box);
-//         wrefresh(result_box);
-//         wrefresh(referencial_box);
-//     }
-// }
-
-// void write_on_data_box(WINDOW *data_box, WINDOW *result_box, WINDOW *adjust_box, int dataSize, int resultSize, int adjustSize, int referencialSize) {
-//     mvwprintw(data_box, 1, dataSize/4, "TEMPERATURA INTERNA");
-//     mvwprintw(data_box, 2, dataSize/4, "TEMPERATURA REFERENTE");
-//     mvwprintw(data_box, 3, dataSize/4, "TEMPERATURA EXTERNA");
-//     mvwprintw(data_box, 4, dataSize/4, "TEMPERATURA POTENCIOMETRO");
-//     mvwprintw(data_box, 5, dataSize/4, "PID");
-//     mvwprintw(data_box, 6, dataSize/4, "RESISTOR");
-//     mvwprintw(data_box, 7, dataSize/4, "FAN");
-
-//     mvwprintw(result_box, 1, resultSize, "%.2f ºC", temp_int);
-//     mvwprintw(result_box, 2, resultSize, "%.2f ºC", temp_ref);
-//     mvwprintw(result_box, 3, resultSize, "%.2f ºC", temp_ext);
-//     mvwprintw(result_box, 4, resultSize, "%.2f ºC", temp_pot);
-//     mvwprintw(result_box, 5, resultSize, "%.2f", pid);
-//     mvwprintw(result_box, 6, resultSize, "%d", (int)resistor);
-//     mvwprintw(result_box, 7, resultSize, "%d", (int)fan);
-
-//     mvwprintw(adjust_box, 4, adjustSize - 3, "PGUP");
-//     mvwprintw(adjust_box, 4, adjustSize + 3, "PGDOWN");
-//     mvwprintw(adjust_box, referencialSize - 8, adjustSize, "%d ºC", (int) referencial_temp);
-// }
+        mvwprintw(command_box, 0, 2, "Menu");
+        mvwprintw(data_box, 0, 2, "Sensores");
+        mvwprintw(data_box, 1, 2, "Servidor distribuido: ---------- %s", (!connection) ? "Desconectado" : "Conectado");
+        mvwprintw(data_box, 2, 2, "Temperatura: ----------------------------- %.2f ºC", temperature);
+        mvwprintw(data_box, 3, 2, "Umidade: --------------------------------- %.2f \%", humidity);
+        mvwprintw(data_box, 4, 2, "Sensor de presenca Sala ------------------ %s", sensorState[sensors[0]]);
+        mvwprintw(data_box, 5, 2, "Sensor de presenca Cozinha --------------- %s", sensorState[sensors[1]]);
+        mvwprintw(data_box, 6, 2, "Sensor de abertura porta Cozinha --------- %s", sensorState[sensors[2]]);
+        mvwprintw(data_box, 7, 2, "Sensor de abertura janela Cozinha -------- %s", sensorState[sensors[3]]);
+        mvwprintw(data_box, 8, 2, "Sensor de abertura porta Sala ------------ %s", sensorState[sensors[4]]);
+        mvwprintw(data_box, 9, 2, "Sensor de abertura janela Sala ----------- %s", sensorState[sensors[5]]);
+        mvwprintw(data_box, 10, 2, "Sensor de abertura janela quarto 1 ------- %s", sensorState[sensors[6]]);
+        mvwprintw(data_box, 11, 2, "Sensor de abertura janela quarto 2 ------- %s", sensorState[sensors[7]]);
+    }
+}

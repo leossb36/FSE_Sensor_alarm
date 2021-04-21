@@ -11,6 +11,8 @@
 #define SERVER_PORT 10006
 #define MAX_SIZE 200
 
+volatile int connection;
+
 int _serverSocket;
 int clientSocket;
 struct sockaddr_in serverAdress;
@@ -57,6 +59,7 @@ void bindServerPort() {
 }
 
 void *connectClient() {
+	connection = 0;
 	clientSize = sizeof(clientAdress);
 	
 	if(listen(_serverSocket, 10) < 0) {
@@ -69,9 +72,9 @@ void *connectClient() {
 	if(clientSocket < 0) {
 		printf("Error: Cannot connect with Client!\n");
 		exit(1);
-	}
+	} else connection = 1;
 
-	printf("Success: Client enabled - %s\n", inet_ntoa(clientAdress.sin_addr));
+	printf("%d\n", connection);
 
 	handlerMessageReceived();
 
@@ -94,11 +97,11 @@ void handlerMessageReceived() {
 		else if (clientMessage[0] == '\0') errorCount++;
 
 		else {
-			printf("Server: Received message %s\n", clientMessage);
+			// printf("Server: Received message %s\n", clientMessage);
 			eventMessageHandler(clientMessage);
 		}
 	}
-	printf("Server: waiting connection with client...\n");
+	// printf("Server: waiting connection with client...\n");
 	connectClient();
 }
 
@@ -107,4 +110,9 @@ void sendMessageToClient(char *message) {
 		printf("Error: Cannot send message to client!\n");
 	else
 		send(clientSocket, message, strlen(message), 0);
+}
+
+void closeSocketServer() {
+	close(clientSocket);
+	close(_serverSocket);
 }
