@@ -16,7 +16,7 @@ void cancelExecution() {
     endwin();
     closeSocketServer();
     pthread_cancel(socketThread);
-    pthread_cancel(menuThread);
+    // pthread_cancel(menuThread);
     exit(0);
 }
 
@@ -35,8 +35,8 @@ int main(int argc, char **argv) {
     pthread_create(&socketThread, NULL, &connectClient, NULL);
     pthread_detach(socketThread);
     
-    pthread_create(&menuThread, NULL, &menuExecution, NULL);
-    pthread_detach(menuThread);
+    // pthread_create(&menuThread, NULL, &menuExecution, NULL);
+    // pthread_detach(menuThread);
 
     while(1) {
         sendMessageToClient(UPDATE_TEMP);

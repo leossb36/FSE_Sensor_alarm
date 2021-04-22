@@ -97,7 +97,7 @@ void handlerMessageReceived() {
 		else if (clientMessage[0] == '\0') errorCount++;
 
 		else {
-			// printf("Server: Received message %s\n", clientMessage);
+			printf("Server: Received message %s\n", clientMessage);
 			eventMessageHandler(clientMessage);
 		}
 	}
